@@ -3,11 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fiap.tech.challenge</groupId>
-    <artifactId>FTC.OnlineCourseNotification.Serverless</artifactId>
+    <artifactId>ftc-online-course-notification-serverless</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
-    <name>FTC.OnlineCourseNotification.Serverless</name>
-    <description>FTC.OnlineCourseNotification.Serverless</description>
+    <name>ftc-online-course-notification-serverless</name>
+    <description>ftc-online-course-notification-serverless</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
