@@ -27,7 +27,7 @@ public class FTCOnlineCourseNotificationServerlessHandler implements RequestHand
             logger.log("Request received on - FTC Online Course Notification - Payload: " + request.getBody());
 
             var loginRequest = objectMapper.readValue(request.getBody(), LoginRequest.class);
-            var isAuthorized = loginRequest.username().equalsIgnoreCase("admin") && loginRequest.password().equalsIgnoreCase("admin");
+            var isAuthorized = loginRequest.username().equalsIgnoreCase("admin") && loginRequest.password().equalsIgnoreCase("123");
             var loginResponse = new LoginResponse(isAuthorized);
 
             return new APIGatewayProxyResponseEvent()
