@@ -13,7 +13,7 @@ import java.io.UncheckedIOException;
 
 public class FTCOnlineCourseNotificationServerlessHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
-    private static ObjectMapper objectMapper;
+    private static final ObjectMapper objectMapper;
 
     static {
         // Dependence initialization, database connection, constant definition, etc.
@@ -27,7 +27,7 @@ public class FTCOnlineCourseNotificationServerlessHandler implements RequestHand
             logger.log("Request received on - FTC Online Course Notification - Payload: " + request.getBody());
 
             var loginRequest = objectMapper.readValue(request.getBody(), LoginRequest.class);
-            var isAuthorized = loginRequest.username().equalsIgnoreCase("admin") && loginRequest.password().equalsIgnoreCase("123");
+            var isAuthorized = loginRequest.username().equalsIgnoreCase("admin") && loginRequest.password().equalsIgnoreCase("admin");
             var loginResponse = new LoginResponse(isAuthorized);
 
             return new APIGatewayProxyResponseEvent()
