@@ -1,12 +1,12 @@
-package com.fiap.tech.challenge.online.course.notification.serverless;
+package fiap.tech.challenge.online.course.notification.serverless;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fiap.tech.challenge.online.course.notification.serverless.request.LoginRequest;
-import com.fiap.tech.challenge.online.course.notification.serverless.response.LoginResponse;
+import fiap.tech.challenge.online.course.notification.serverless.request.LoginRequest;
+import fiap.tech.challenge.online.course.notification.serverless.response.LoginResponse;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
