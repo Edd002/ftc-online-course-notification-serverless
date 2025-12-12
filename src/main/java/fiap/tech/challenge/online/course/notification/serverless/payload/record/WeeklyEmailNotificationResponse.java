@@ -1,0 +1,4 @@
+package fiap.tech.challenge.online.course.notification.serverless.payload.record;
+
+public record WeeklyEmailNotificationResponse(AdministratorResponse administrator, AverageAssessmentQuantityByDayResponse averageAssessmentQuantityByDay, Long urgentAssessmentQuantity, Double averageAssessmentScore) {
+}

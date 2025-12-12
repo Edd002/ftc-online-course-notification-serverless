@@ -1,4 +1,4 @@
 package fiap.tech.challenge.online.course.notification.serverless.payload.record;
 
-public record FeedbackNotificationRequest(String hashIdFeedback) {
+public record AdministratorResponse(Long id, String name, String email) {
 }

@@ -1,7 +1,7 @@
 package fiap.tech.challenge.online.course.notification.serverless.email;
 
 import fiap.tech.challenge.online.course.notification.serverless.payload.HttpObjectMapper;
-import fiap.tech.challenge.online.course.notification.serverless.payload.record.FeedbackNotificationResponse;
+import fiap.tech.challenge.online.course.notification.serverless.payload.record.WeeklyEmailNotificationResponse;
 import fiap.tech.challenge.online.course.notification.serverless.payload.record.mail.MailFromSendRequest;
 import fiap.tech.challenge.online.course.notification.serverless.payload.record.mail.MailSendRequest;
 import fiap.tech.challenge.online.course.notification.serverless.payload.record.mail.MailToSendRequest;
@@ -28,7 +28,7 @@ public class FTCOnlineCourseNotificationEmailDeliverService {
         emailProperties = new EmailProperties(applicationProperties);
     }
 
-    public void sendEmailUrgentFeedbackByMailtrapAPI(FeedbackNotificationResponse feedbackNotificationResponse) {
+    public void sendWeeklyEmailNotificationByMailtrapAPI(WeeklyEmailNotificationResponse weeklyEmailNotificationResponse) {
         try (HttpClient client = HttpClient.newHttpClient()) {
             final String EMAIL_API_URL = emailProperties.getMailtrapUrl();
             final String EMAIL_API_TOKEN_KEY = emailProperties.getMailtrapPassword();
@@ -36,9 +36,9 @@ public class FTCOnlineCourseNotificationEmailDeliverService {
             String requestBody = HttpObjectMapper.writeValueAsString(
                     new MailSendRequest(
                             new MailFromSendRequest(emailProperties.getMailtrapSenderEmail(), "FTC Online Course Notification"),
-                            Collections.singletonList(new MailToSendRequest(feedbackNotificationResponse.administratorEmail())),
-                            "E-mail de relatório semanal de feedbacks",
-                            buildEmailHtmlMessageBody(feedbackNotificationResponse),
+                            Collections.singletonList(new MailToSendRequest(weeklyEmailNotificationResponse.administrator().email())),
+                            "E-mail de relatório semanal de avaliações dos alunos",
+                            buildEmailHtmlMessageBody(weeklyEmailNotificationResponse),
                             "Notification"));
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(EMAIL_API_URL))
@@ -55,7 +55,7 @@ public class FTCOnlineCourseNotificationEmailDeliverService {
         }
     }
 
-    public void sendEmailUrgentFeedbackByGmailSMTP(FeedbackNotificationResponse feedbackNotificationResponse) {
+    public void sendWeeklyEmailNotificationByGmailSMTP(WeeklyEmailNotificationResponse weeklyEmailNotificationResponse) {
         try {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             Properties props = new Properties();
@@ -75,10 +75,10 @@ public class FTCOnlineCourseNotificationEmailDeliverService {
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(emailProperties.getGmailUsername(), "FTC Online Course Notification"));
-            Address[] toUser = InternetAddress.parse(feedbackNotificationResponse.administratorEmail());
+            Address[] toUser = InternetAddress.parse(weeklyEmailNotificationResponse.administrator().email());
             message.setRecipients(Message.RecipientType.TO, toUser);
-            message.setSubject("E-mail de notificação de feedback urgente do aluno");
-            message.setContent(buildEmailHtmlMessageBody(feedbackNotificationResponse), "text/html");
+            message.setSubject("E-mail de relatório semanal de avaliações dos alunos");
+            message.setContent(buildEmailHtmlMessageBody(weeklyEmailNotificationResponse), "text/html");
 
             MailcapCommandMap mc = (MailcapCommandMap) CommandMap.getDefaultCommandMap();
             mc.addMailcap("text/html;; x-java-content-handler=com.sun.mail.handlers.text_html");
@@ -90,19 +90,14 @@ public class FTCOnlineCourseNotificationEmailDeliverService {
         }
     }
 
-    private String buildEmailHtmlMessageBody(FeedbackNotificationResponse feedbackNotificationResponse) {
-        return "Segue o relatório de feedback urgente do aluno: " +
-                "<br><b>Data de registro do feedback:</b> " + feedbackNotificationResponse.createdIn() +
-                "<br><b>Nome do administrador:</b> " + feedbackNotificationResponse.administradorName() +
-                "<br><b>E-mail do administrador:</b> " + feedbackNotificationResponse.administratorEmail() +
-                "<br><b>Nome do professor:</b> " + feedbackNotificationResponse.teacherName() +
-                "<br><b>E-mail do professor:</b> " + feedbackNotificationResponse.teacherEmail() +
-                "<br><b>Nome do estudante:</b> " + feedbackNotificationResponse.studentName() +
-                "<br><b>E-mail do estudante:</b> " + feedbackNotificationResponse.studentEmail() +
-                "<br><b>Tipo da avaliação:</b> " + feedbackNotificationResponse.assessmentType() +
-                "<br><b>Nome da avaliação:</b> " + feedbackNotificationResponse.assessmentName() +
-                "<br><b>Nota da avaliação:</b> " + feedbackNotificationResponse.assessmentScore() +
-                "<br><b>Descrição do feedback:</b> " + feedbackNotificationResponse.description() +
-                "<br><b>Comentário do feedback:</b> " + feedbackNotificationResponse.comment();
+    private String buildEmailHtmlMessageBody(WeeklyEmailNotificationResponse weeklyEmailNotificationResponse) {
+        return "Segue o relatório semanal de avaliações dos alunos: " +
+                "<br><b>Nome do administrador:</b> " + weeklyEmailNotificationResponse.administrator().name() +
+                "<br><b>E-mail do administrador:</b> " + weeklyEmailNotificationResponse.administrator().email() +
+
+                "<br><b>Média da quantidade de avaliações por dia:</b> " + weeklyEmailNotificationResponse.averageAssessmentQuantityByDay() +
+
+                "<br><b>Média das avaliações urgentes:</b> " + weeklyEmailNotificationResponse.urgentAssessmentQuantity() +
+                "<br><b>Média das notas das avaliações:</b> " + weeklyEmailNotificationResponse.averageAssessmentScore();
     }
 }

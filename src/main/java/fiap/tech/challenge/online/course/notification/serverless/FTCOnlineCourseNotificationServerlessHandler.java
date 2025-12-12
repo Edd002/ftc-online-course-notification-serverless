@@ -10,11 +10,14 @@ import fiap.tech.challenge.online.course.notification.serverless.dao.FTCOnlineCo
 import fiap.tech.challenge.online.course.notification.serverless.email.FTCOnlineCourseNotificationEmailDeliverService;
 import fiap.tech.challenge.online.course.notification.serverless.loader.ApplicationPropertiesLoader;
 import fiap.tech.challenge.online.course.notification.serverless.payload.HttpObjectMapper;
+import fiap.tech.challenge.online.course.notification.serverless.payload.record.AdministratorResponse;
+import fiap.tech.challenge.online.course.notification.serverless.payload.record.WeeklyEmailNotificationResponse;
 import fiap.tech.challenge.online.course.notification.serverless.payload.record.error.ErrorResponse;
 import fiap.tech.challenge.online.course.notification.serverless.payload.record.error.InvalidParameterErrorResponse;
 
 import java.security.InvalidParameterException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class FTCOnlineCourseNotificationServerlessHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
@@ -38,14 +41,18 @@ public class FTCOnlineCourseNotificationServerlessHandler implements RequestHand
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
-        var logger = context.getLogger();
         try {
             context.getLogger().log("Requisição recebida em FTC Online Course Notification.", LogLevel.INFO);
-
-            FeedbackReportResponse feedbackReportResponse = ftcOnlineCourseReportServerlessDAO.getFeedbackReportByHashId(feedbackReportRequest);
-            ftcOnlineCourseReportEmailDeliverService.sendEmailUrgentFeedbackByGmailSMTP(feedbackReportResponse);
-            ftcOnlineCourseReportServerlessDAO.registerFeedbackReport(feedbackReportRequest, feedbackReportResponse);
-
+            List<AdministratorResponse> administrators = ftcOnlineCourseNotificationServerlessDAO.getAllAdministrators();
+            administrators.forEach(administrator -> {
+                WeeklyEmailNotificationResponse weeklyEmailNotificationResponse = new WeeklyEmailNotificationResponse(
+                        administrator,
+                        ftcOnlineCourseNotificationServerlessDAO.getAverageAssessmentQuantityByDay(administrator.id()),
+                        ftcOnlineCourseNotificationServerlessDAO.getUrgentAssessmentQuantity(administrator.id()),
+                        ftcOnlineCourseNotificationServerlessDAO.getAverageAssessmentScore(administrator.id())
+                );
+                ftcOnlineCourseNotificationEmailDeliverService.sendWeeklyEmailNotificationByGmailSMTP(weeklyEmailNotificationResponse);
+            });
             return new APIGatewayProxyResponseEvent().withStatusCode(201).withIsBase64Encoded(false);
         } catch (InvalidParameterException e) {
             context.getLogger().log("Message: " + e.getMessage() + " - Cause: " + e.getCause() + " - Stacktrace: " + Arrays.toString(e.getStackTrace()), LogLevel.ERROR);
