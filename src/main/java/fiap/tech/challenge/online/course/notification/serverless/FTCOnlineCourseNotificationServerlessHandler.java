@@ -47,10 +47,10 @@ public class FTCOnlineCourseNotificationServerlessHandler implements RequestHand
             administrators.forEach(administrator -> {
                 WeeklyEmailNotificationResponse weeklyEmailNotificationResponse = new WeeklyEmailNotificationResponse(
                         administrator,
-                        ftcOnlineCourseNotificationServerlessDAO.getAverageAssessmentQuantityByDay(administrator.id()),
                         ftcOnlineCourseNotificationServerlessDAO.getUrgentAssessmentQuantity(administrator.id()),
-                        ftcOnlineCourseNotificationServerlessDAO.getAverageAssessmentScore(administrator.id())
-                );
+                        ftcOnlineCourseNotificationServerlessDAO.getAverageAssessmentScore(administrator.id()),
+                        ftcOnlineCourseNotificationServerlessDAO.getAverageAssessmentQuantityByDay(administrator.id())
+                        );
                 ftcOnlineCourseNotificationEmailDeliverService.sendWeeklyEmailNotificationByGmailSMTP(weeklyEmailNotificationResponse);
             });
             return new APIGatewayProxyResponseEvent().withStatusCode(201).withIsBase64Encoded(false);

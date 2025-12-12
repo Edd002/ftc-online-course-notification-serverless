@@ -6,7 +6,6 @@ import fiap.tech.challenge.online.course.notification.serverless.properties.Data
 
 import java.sql.*;
 import java.util.*;
-import java.util.Date;
 
 public class FTCOnlineCourseNotificationServerlessDAO {
 
@@ -39,8 +38,17 @@ public class FTCOnlineCourseNotificationServerlessDAO {
         }
     }
 
-    public AverageAssessmentQuantityByDayResponse getAverageAssessmentQuantityByDay(Long administratorId) {
+    public Long getUrgentAssessmentQuantity(Long administratorId) {
+        return null;
+    }
+
+    public Double getAverageAssessmentScore(Long administratorId) {
+        return null;
+    }
+
+    public List<AverageAssessmentQuantityByDayResponse> getAverageAssessmentQuantityByDay(Long administratorId) {
         try {
+            List<AverageAssessmentQuantityByDayResponse> averageAssessmentQuantitiesByDay = new ArrayList<>();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT DATE_TRUNC('day', ta.created_in) AS day, COUNT(*) AS quantity FROM public.t_feedback tf " +
                     "INNER JOIN public.t_assessment ta on ta.id = tf.fk_assessment " +
                     "INNER JOIN public.t_teacher_student tts on tts.id = ta.fk_teacher_student " +
@@ -52,24 +60,15 @@ public class FTCOnlineCourseNotificationServerlessDAO {
                     "ORDER BY day;");
             preparedStatement.setLong(1, administratorId);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (!resultSet.next()) {
-                return new AverageAssessmentQuantityByDayResponse(new Date(), 0L);
-            } else {
-                return new AverageAssessmentQuantityByDayResponse(
+            while (resultSet.next()) {
+                averageAssessmentQuantitiesByDay.add(new AverageAssessmentQuantityByDayResponse(
                         resultSet.getTimestamp("day", Calendar.getInstance(TimeZone.getTimeZone("GMT-3"))),
                         resultSet.getLong("quantity")
-                );
+                ));
             }
+            return averageAssessmentQuantitiesByDay;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public Long getUrgentAssessmentQuantity(Long administratorId) {
-        return null;
-    }
-
-    public Double getAverageAssessmentScore(Long administratorId) {
-        return null;
     }
 }

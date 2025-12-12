@@ -1,6 +1,7 @@
 package fiap.tech.challenge.online.course.notification.serverless.email;
 
 import fiap.tech.challenge.online.course.notification.serverless.payload.HttpObjectMapper;
+import fiap.tech.challenge.online.course.notification.serverless.payload.record.AverageAssessmentQuantityByDayResponse;
 import fiap.tech.challenge.online.course.notification.serverless.payload.record.WeeklyEmailNotificationResponse;
 import fiap.tech.challenge.online.course.notification.serverless.payload.record.mail.MailFromSendRequest;
 import fiap.tech.challenge.online.course.notification.serverless.payload.record.mail.MailSendRequest;
@@ -17,6 +18,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -94,10 +96,19 @@ public class FTCOnlineCourseNotificationEmailDeliverService {
         return "Segue o relatório semanal de avaliações dos alunos: " +
                 "<br><b>Nome do administrador:</b> " + weeklyEmailNotificationResponse.administrator().name() +
                 "<br><b>E-mail do administrador:</b> " + weeklyEmailNotificationResponse.administrator().email() +
-
-                "<br><b>Média da quantidade de avaliações por dia:</b> " + weeklyEmailNotificationResponse.averageAssessmentQuantityByDay() +
-
                 "<br><b>Média das avaliações urgentes:</b> " + weeklyEmailNotificationResponse.urgentAssessmentQuantity() +
-                "<br><b>Média das notas das avaliações:</b> " + weeklyEmailNotificationResponse.averageAssessmentScore();
+                "<br><b>Média das notas das avaliações:</b> " + weeklyEmailNotificationResponse.averageAssessmentScore() +
+                "<br><br><b>Média da quantidade de avaliações por dia:</b> " + buildAverageAssessmentQuantityByDayHtmlMessageBody(weeklyEmailNotificationResponse.averageAssessmentQuantitiesByDay());
+    }
+
+    private String buildAverageAssessmentQuantityByDayHtmlMessageBody(List<AverageAssessmentQuantityByDayResponse> averageAssessmentQuantitiesByDay) {
+        StringBuilder averageAssessmentQuantitiesByDayHtmlMessageBody = new StringBuilder();
+        averageAssessmentQuantitiesByDay.forEach(averageAssessmentQuantityByDay ->
+                averageAssessmentQuantitiesByDayHtmlMessageBody
+                        .append("<br>")
+                        .append("<b>Dia: </b>").append(averageAssessmentQuantityByDay.day())
+                        .append(" - <b>Média da quantidade de avaliações: </b>").append(averageAssessmentQuantityByDay.averageAssessmentQuantity())
+        );
+        return averageAssessmentQuantitiesByDayHtmlMessageBody.toString();
     }
 }
