@@ -109,7 +109,7 @@ public class FTCOnlineCourseNotificationEmailDeliverService {
         assessmentQuantitiesByDay.forEach(assessmentQuantityByDay ->
                 assessmentQuantitiesByDayHtmlMessageBody
                         .append("<br>")
-                        .append("<b>Dia: </b>").append(assessmentQuantityByDay.day().toInstant().atZone(ZoneId.of("GMT-3")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.of("GMT-3"))))
+                        .append("<b>Dia: </b>").append(assessmentQuantityByDay.day().toInstant().atZone(ZoneId.of("America/Sao_Paulo")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy").withZone(ZoneId.of("America/Sao_Paulo"))))
                         .append(" - <b>Quantidade de avaliações: </b>").append(assessmentQuantityByDay.assessmentQuantity())
         );
         return assessmentQuantitiesByDayHtmlMessageBody.toString();
