@@ -98,8 +98,9 @@ public class FTCOnlineCourseNotificationEmailDeliverService {
         return "Segue o relatório semanal de avaliações dos alunos: " +
                 "<br><b>Nome do administrador:</b> " + weeklyEmailNotificationResponse.administrator().name() +
                 "<br><b>E-mail do administrador:</b> " + weeklyEmailNotificationResponse.administrator().email() +
-                "<br><br><b>Média das avaliações urgentes:</b> " + weeklyEmailNotificationResponse.urgentAssessmentQuantity() +
+                "<br><br><b>Quantidade das avaliações urgentes:</b> " + weeklyEmailNotificationResponse.urgentAssessmentQuantity() +
                 "<br><b>Média das notas das avaliações:</b> " + weeklyEmailNotificationResponse.averageAssessmentScore() +
+                "<br><b>Média da quantidade de avaliações por dia:</b> " + weeklyEmailNotificationResponse.getAverageAssessmentQuantitiesByDay() +
                 "<br><br><b>-- Quantidade de avaliações por dia --</b> " + buildAssessmentQuantityByDayHtmlMessageBody(weeklyEmailNotificationResponse.assessmentQuantitiesByDay());
     }
 
