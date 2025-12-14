@@ -119,7 +119,7 @@ public class FTCOnlineCourseNotificationServerlessDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 assessmentQuantitiesByDay.add(new AssessmentQuantityByDayResponse(
-                        resultSet.getTimestamp("day", Calendar.getInstance(TimeZone.getTimeZone("GMT-3"))),
+                        resultSet.getTimestamp("day", Calendar.getInstance(TimeZone.getTimeZone("America/Sao_Paulo"))),
                         resultSet.getLong("quantity")
                 ));
             }
