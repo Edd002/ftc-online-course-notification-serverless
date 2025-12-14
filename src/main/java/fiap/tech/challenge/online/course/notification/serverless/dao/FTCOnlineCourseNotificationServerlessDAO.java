@@ -6,6 +6,7 @@ import fiap.tech.challenge.online.course.notification.serverless.payload.record.
 import fiap.tech.challenge.online.course.notification.serverless.properties.DataSourceProperties;
 
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class FTCOnlineCourseNotificationServerlessDAO {
@@ -41,19 +42,20 @@ public class FTCOnlineCourseNotificationServerlessDAO {
 
     public List<Long> getAllFeedbackIdsByAdministrator(List<Long> administratorIds) {
         try {
+            List<Long> feedbackIds = new ArrayList<>();
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT tf.id FROM public.t_feedback tf " +
                         "INNER JOIN public.t_assessment ta on ta.id = tf.fk_assessment " +
                         "INNER JOIN public.t_teacher_student tts on tts.id = ta.fk_teacher_student " +
                         "INNER JOIN public.t_teacher tt on tt.id = tts.fk_teacher " +
                         "INNER JOIN public.t_student ts on ts.id = tts.fk_student " +
                         "INNER JOIN public.t_administrator tadmin on tadmin.id = tt.fk_administrator " +
-                        "WHERE tadmin.id IN ?;");
+                        "WHERE tadmin.id = ANY (?);");
             preparedStatement.setArray(1, connection.createArrayOf("INT8", administratorIds.toArray()));
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (!resultSet.next()) {
-                return Collections.singletonList(0L);
+            while (resultSet.next()) {
+                feedbackIds.add(resultSet.getLong("id"));
             }
-            return Arrays.asList((Long[]) resultSet.getArray("id").getArray());
+            return !feedbackIds.isEmpty() ? feedbackIds : Collections.singletonList(0L);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -147,16 +149,16 @@ public class FTCOnlineCourseNotificationServerlessDAO {
                 "    RETURNING id AS weekly_email_notification_id " +
                 ")" +
                 "UPDATE t_feedback SET fk_weekly_email_notification = (SELECT weekly_email_notification_id) " +
-                "FROM new_weekly_email_notification WHERE id IN ?;", Statement.RETURN_GENERATED_KEYS);
+                "FROM new_weekly_email_notification WHERE id = ANY (?);", Statement.RETURN_GENERATED_KEYS);
         return setPreparedStatementParameters(connection, feedbackIds, weeklyEmailNotificationResponse, preparedStatement);
     }
 
     private PreparedStatement setPreparedStatementParameters(Connection connection, List<Long> feedbackIds, WeeklyEmailNotificationResponse weeklyEmailNotificationResponse, PreparedStatement preparedStatement) throws SQLException {
         preparedStatement.setString(1, weeklyEmailNotificationResponse.administrator().email());
         preparedStatement.setBoolean(2, true);
-        preparedStatement.setDouble(3, weeklyEmailNotificationResponse.getAverageAssessmentQuantitiesByDay());
+        preparedStatement.setDouble(3, Double.parseDouble(new DecimalFormat("#.##").format(weeklyEmailNotificationResponse.getAverageAssessmentQuantitiesByDay())));
         preparedStatement.setLong(4, weeklyEmailNotificationResponse.urgentAssessmentQuantity());
-        preparedStatement.setDouble(5, weeklyEmailNotificationResponse.averageAssessmentScore());
+        preparedStatement.setDouble(5,  Double.parseDouble(new DecimalFormat("#.##").format(weeklyEmailNotificationResponse.averageAssessmentScore())));
         preparedStatement.setArray(6, connection.createArrayOf("INT8", feedbackIds.toArray()));
         return preparedStatement;
     }
