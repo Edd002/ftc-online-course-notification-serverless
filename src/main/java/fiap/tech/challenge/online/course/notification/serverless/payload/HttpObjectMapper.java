@@ -4,9 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.TimeZone;
+
 public class HttpObjectMapper {
 
-    private static final ObjectMapper payloadObjectMapper = new ObjectMapper();
+    private static final ObjectMapper payloadObjectMapper;
+
+    static {
+        payloadObjectMapper = new ObjectMapper();
+        payloadObjectMapper.setTimeZone(TimeZone.getTimeZone("America/Sao_Paulo"));
+    }
 
     public static String writeValueAsString(Object value) {
         try {
