@@ -19,6 +19,7 @@ import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public class FTCOnlineCourseNotificationServerlessHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
@@ -52,6 +53,8 @@ public class FTCOnlineCourseNotificationServerlessHandler implements RequestHand
                             ftcOnlineCourseNotificationServerlessDAO.getWeeklyAssessmentQuantitiesByDay(administrator.id())
                         );
                 ftcOnlineCourseNotificationEmailDeliverService.sendWeeklyEmailNotificationByGmailSMTP(weeklyEmailNotificationResponse);
+                List<Long> feedbackIdsByAdministrator = ftcOnlineCourseNotificationServerlessDAO.getAllFeedbackIdsByAdministrator(administrators.stream().map(AdministratorResponse::id).collect(Collectors.toList()));
+                ftcOnlineCourseNotificationServerlessDAO.registerWeeklyEmailNotification(feedbackIdsByAdministrator, weeklyEmailNotificationResponse);
             });
             return new APIGatewayProxyResponseEvent().withStatusCode(201).withIsBase64Encoded(false);
         } catch (InvalidParameterException e) {
