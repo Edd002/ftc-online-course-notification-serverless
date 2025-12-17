@@ -1,6 +1,6 @@
 # ftc-online-course-notification-serverless
 
-Projeto Tech Challenge Online Course Notification Serverless do Curso de Pós-Graduação Lato Sensu Arquitetura e Desenvolvimento em JAVA da Faculdade de Informática e Administração Paulista (FIAP). Aplicação Serverless responsável por enviar um relatório de feedbacks ao administrador semanalmente via Amazon EventBridge.
+Projeto Tech Challenge Online Course Notification Serverless do Curso de Pós-Graduação Lato Sensu Arquitetura e Desenvolvimento em JAVA da Faculdade de Informática e Administração Paulista (FIAP). Aplicação Serverless responsável por enviar um relatório de feedbacks por e-mail ao administrador disparado pelo Amazon EventBridge semanalmente.
 
 ## Diagrama de Arquitetura
 
