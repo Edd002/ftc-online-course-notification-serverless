@@ -6,7 +6,7 @@ Projeto Tech Challenge Online Course Notification Serverless do Curso de Pós-Gr
 
 O diagrama abaixo ilustra a arquitetura e o fluxo de dados de todos os serviços envolvidos:
 
-<img width="1466" height="1091" alt="diagrama-arquitetural" src="https://github.com/user-attachments/assets/dafefab7-a3bc-4219-b373-a9a776ff689f" />
+<img width="1466" height="1091" alt="ftc-online-course-arquitetural-diagram" src="https://github.com/user-attachments/assets/dafefab7-a3bc-4219-b373-a9a776ff689f" />
 
 ## Diagrama de Banco de Dados
 
